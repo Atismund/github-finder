@@ -18,12 +18,23 @@ const GithubState = (props) => {
     loading: false,
   };
 
+  let githubClientId;
+  let githubClientSecret;
+
+  if (process.env.NODE_ENV !== 'production') {
+    githubClientId = process.env.REACT_APP_GITHUB_CLIENT_ID;
+    githubClientSecret = process.env.REACT_APP_GITHUB_CLIENT_SECRET;
+  } else {
+    githubClientId = process.env.GITHUB_CLIENT_ID;
+    githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+  }
+
   const [state, dispatch] = useReducer(GithubReducer, initialState);
 
   const searchUsers = async (text) => {
     setLoading();
     const res = await axios.get(
-      `https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+      `https://api.github.com/search/users?q=${text}&client_id=${githubClientId}&${githubClientSecret}`
     );
     dispatch({
       type: SEARCH_USERS,
@@ -33,7 +44,7 @@ const GithubState = (props) => {
   const getUser = async (login) => {
     setLoading();
     const res = await axios.get(
-      `https://api.github.com/users/${login}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+      `https://api.github.com/users/${login}?client_id=${githubClientId}&${githubClientSecret}`
     );
     dispatch({
       type: GET_USER,
@@ -43,7 +54,7 @@ const GithubState = (props) => {
   const getUserRepos = async (login) => {
     setLoading();
     const res = await axios.get(
-      `https://api.github.com/users/${login}/repos?per_page=5&sort=created:asc&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+      `https://api.github.com/users/${login}/repos?per_page=5&sort=created:asc&client_id=${githubClientId}&${githubClientSecret}`
     );
     dispatch({
       type: GET_REPOS,
